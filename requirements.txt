@@ -1,0 +1,5 @@
+yfinance
+feedparser
+matplotlib
+requests
+python-dotenv
