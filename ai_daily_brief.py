@@ -7,12 +7,16 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import webbrowser
 from dotenv import load_dotenv
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 import base64
 
 # .env 파일 로드
 load_dotenv()
+
+print(f"[{datetime.datetime.now()}] AI Daily Briefing 시작")
 
 # 설정 - 사용자의 요청에 따라 S&P 500과 나스닥만 유지
 STOCKS = {
