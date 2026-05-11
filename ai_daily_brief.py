@@ -500,6 +500,8 @@ def send_telegram(html_path, stock_summary):
             log("텔레그램 전송 중 오류 발생 (위 로그 확인)")
     except Exception as e:
         log(f"텔레그램 전송 중 예외 발생: {e}")
+        # GitHub Actions에서 실패로 표시되도록 종료 코드 1 반환
+        sys.exit(1)
 
 def main():
     today = datetime.datetime.now()
