@@ -2,7 +2,7 @@ name: Daily AI Briefing
 
 on:
   schedule:
-    - cron: '30 0 * * *' # 매일 한국 시간 오전 9:30 (00:30 UTC)
+    - cron: '0 20 * * *' # 매일 한국 시간 오전 5:00 (20:00 UTC) - 지연 시간을 고려하여 일찍 설정
   workflow_dispatch: # 수동으로도 실행 가능하게 설정
 
 jobs:

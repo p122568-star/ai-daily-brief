@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 ai_daily_report.html
 .vscode/
+*.log
+.venv/

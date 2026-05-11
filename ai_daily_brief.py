@@ -13,10 +13,22 @@ import matplotlib.pyplot as plt
 import io
 import base64
 
+import sys
+
 # .env 파일 로드
 load_dotenv()
 
-print(f"[{datetime.datetime.now()}] AI Daily Briefing 시작")
+# 로그 설정
+log_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ai_daily_brief.log")
+
+def log(message):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    msg = f"[{timestamp}] {message}"
+    print(msg)
+    with open(log_file_path, "a", encoding="utf-8") as f:
+        f.write(msg + "\n")
+
+log("AI Daily Briefing 시작")
 
 # 설정 - 사용자의 요청에 따라 S&P 500과 나스닥만 유지
 STOCKS = {
@@ -342,7 +354,7 @@ def create_sparkline(history, period="1mo"):
 
 def get_stock_data():
     stock_list = []
-    print("시장 데이터 및 멀티 기간 차트 생성 중...")
+    log("시장 데이터 및 멀티 기간 차트 생성 중...")
     for symbol, name in STOCKS.items():
         try:
             ticker = yf.Ticker(symbol)
@@ -388,7 +400,7 @@ def get_stock_data():
             """
             stock_list.append(card)
         except Exception as e:
-            print(f"Error fetching {symbol}: {e}")
+            log(f"Error fetching {symbol}: {e}")
     return "".join(stock_list)
 
 def contains_korean(text):
@@ -398,7 +410,7 @@ def contains_korean(text):
 def get_news_data():
     news_list = []
     seen_titles = set()
-    print("뉴스 데이터 수집 및 한국어 기사 필터링 중...")
+    log("뉴스 데이터 수집 및 한국어 기사 필터링 중...")
     for feed_url in NEWS_FEEDS:
         feed = feedparser.parse(feed_url)
         for entry in feed.entries:
@@ -435,7 +447,7 @@ def send_email(html_content):
     if not all([sender, password, receiver]):
         return
 
-    print("이메일 전송 중...")
+    log("이메일 전송 중...")
     msg = MIMEMultipart()
     msg['From'] = sender
     msg['To'] = receiver
@@ -448,21 +460,21 @@ def send_email(html_content):
         server.login(sender, password)
         server.send_message(msg)
         server.quit()
-        print("이메일 전송 완료!")
+        log("이메일 전송 완료!")
     except Exception as e:
-        print(f"이메일 전송 실패: {e}")
+        log(f"이메일 전송 실패: {e}")
 
 def send_telegram(html_path, stock_summary):
     token = os.getenv("TELEGRAM_BOT_TOKEN").strip() if os.getenv("TELEGRAM_BOT_TOKEN") else None
     chat_id = os.getenv("TELEGRAM_CHAT_ID").strip() if os.getenv("TELEGRAM_CHAT_ID") else None
     
     if not token or not chat_id:
-        print(f"텔레그램 설정이 누락되어 전송을 건너뜁니다. (Token: {token is not None}, ChatID: {chat_id is not None})")
+        log(f"텔레그램 설정이 누락되어 전송을 건너뜁니다. (Token: {token is not None}, ChatID: {chat_id is not None})")
         return
 
-    print(f"텔레그램 전송 중... (Token 길이: {len(token)})")
+    log(f"텔레그램 전송 중... (Token 길이: {len(token)})")
     # 보안을 위해 토큰 앞부분만 살짝 출력
-    print(f"토큰 시작부분 확인: {token[:10]}...")
+    log(f"토큰 시작부분 확인: {token[:10]}...")
     
     # 1. 텍스트 요약 전송
     text = f"📢 [AI Daily Briefing] {datetime.datetime.now().strftime('%Y-%m-%d')}\n\n"
@@ -473,21 +485,21 @@ def send_telegram(html_path, stock_summary):
         # 메시지 전송
         r1 = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", 
                           data={"chat_id": chat_id, "text": text, "parse_mode": "HTML"})
-        print(f"메시지 전송 결과: {r1.status_code}, {r1.text}")
+        log(f"메시지 전송 결과: {r1.status_code}, {r1.text}")
         
         # HTML 파일 전송
         with open(html_path, "rb") as f:
             r2 = requests.post(f"https://api.telegram.org/bot{token}/sendDocument", 
                               data={"chat_id": chat_id}, 
                               files={"document": f})
-            print(f"파일 전송 결과: {r2.status_code}, {r2.text}")
+            log(f"파일 전송 결과: {r2.status_code}, {r2.text}")
             
         if r1.ok and r2.ok:
-            print("텔레그램 전송 완료!")
+            log("텔레그램 전송 완료!")
         else:
-            print("텔레그램 전송 중 오류 발생 (위 로그 확인)")
+            log("텔레그램 전송 중 오류 발생 (위 로그 확인)")
     except Exception as e:
-        print(f"텔레그램 전송 중 예외 발생: {e}")
+        log(f"텔레그램 전송 중 예외 발생: {e}")
 
 def main():
     today = datetime.datetime.now()
@@ -520,7 +532,7 @@ def main():
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(final_html)
     
-    print(f"보고서 생성 완료: {output_path}")
+    log(f"보고서 생성 완료: {output_path}")
     
     # 알림 발송
     send_email(final_html)
