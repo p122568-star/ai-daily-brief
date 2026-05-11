@@ -469,8 +469,8 @@ def send_telegram(html_path, stock_summary):
     chat_id = os.getenv("TELEGRAM_CHAT_ID").strip() if os.getenv("TELEGRAM_CHAT_ID") else None
     
     if not token or not chat_id:
-        log(f"텔레그램 설정이 누락되어 전송을 건너뜁니다. (Token: {token is not None}, ChatID: {chat_id is not None})")
-        return
+        log(f"텔레그램 설정이 누락되었습니다. GitHub Secrets 설정을 확인해주세요. (Token: {token is not None}, ChatID: {chat_id is not None})")
+        sys.exit(1)
 
     log(f"텔레그램 전송 중... (Token 길이: {len(token)})")
     # 보안을 위해 토큰 앞부분만 살짝 출력
