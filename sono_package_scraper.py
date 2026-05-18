@@ -76,7 +76,7 @@ def main():
         # 2. 아이디/비번 입력 및 로그인 버튼 클릭
         page.fill("input#lginId", SONO_ID)
         page.fill("input#lginPw", SONO_PW)
-        page.click('button:has-text("로그인")')
+        page.click('button.btn.xl.fill')
         
         # 3. 로그인 처리 대기
         page.wait_for_timeout(3000)
