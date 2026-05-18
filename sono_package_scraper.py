@@ -31,7 +31,7 @@ def parse_with_gemini(raw_text):
         return raw_text[:1000]
         
     genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = f"""
     아래는 소노호텔 패키지 안내 웹페이지의 텍스트 데이터입니다.
