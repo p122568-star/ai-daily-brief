@@ -25,6 +25,16 @@ def send_telegram(text):
     }
     requests.post(url, json=payload)
 
+def send_telegram_photo(photo_path, caption=""):
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
+    try:
+        with open(photo_path, "rb") as f:
+            requests.post(url, data={"chat_id": TELEGRAM_CHAT_ID, "caption": caption}, files={"photo": f})
+    except Exception as e:
+        print(f"사진 전송 오류: {e}")
+
 def parse_with_gemini(raw_text):
     if not GEMINI_API_KEY:
         print("GEMINI_API_KEY가 없습니다. 원본 텍스트 일부를 반환합니다.")
@@ -89,9 +99,10 @@ def main():
         # 5. 페이지 텍스트 추출
         # 로그인 실패로 다시 로그인 폼이 있다면 에러 처리
         if page.locator("input#lginId").is_visible():
-            msg = "소노호텔 로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요."
+            msg = "소노호텔 로그인에 실패했습니다. (아이디/비밀번호 오류 또는 방화벽 차단)"
             print(msg)
-            send_telegram(f"🚨 <b>소노호텔 스크래핑 오류</b>\n{msg}")
+            page.screenshot(path="error.png")
+            send_telegram_photo("error.png", f"🚨 소노호텔 스크래핑 오류\n{msg}\n현재 화면 상태입니다.")
             browser.close()
             sys.exit(1)
             
