@@ -32,6 +32,8 @@ jobs:
 
     - name: Run Sono Package Scraper
       env:
+        SONO_TELEGRAM_BOT_TOKEN: ${{ secrets.SONO_TELEGRAM_BOT_TOKEN }}
+        SONO_TELEGRAM_CHAT_ID: ${{ secrets.SONO_TELEGRAM_CHAT_ID }}
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         SONO_ID: ${{ secrets.SONO_ID }}

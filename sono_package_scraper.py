@@ -11,8 +11,8 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 # 환경변수 로드
 EMAIL_SENDER = os.getenv("EMAIL_SENDER")
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+TELEGRAM_BOT_TOKEN = os.getenv("SONO_TELEGRAM_BOT_TOKEN") or os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("SONO_TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_CHAT_ID")
 SONO_ID = os.getenv("SONO_ID")
 SONO_PW = os.getenv("SONO_PW")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -236,3 +236,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
