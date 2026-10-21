@@ -3,7 +3,7 @@ import sys
 import datetime
 import requests
 from playwright.sync_api import sync_playwright
-import google.generativeai as genai
+from google import genai
 from dotenv import load_dotenv
 
 # .env 파일 로드 (스크립트 위치 기준)
@@ -56,8 +56,7 @@ def parse_with_gemini(raw_text, page_num):
     if not GEMINI_API_KEY:
         return raw_text[:1000]
 
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    client = genai.Client(api_key=GEMINI_API_KEY)
 
     prompt = f"""
     아래는 소노호텔 패키지 안내 웹페이지 {page_num}번째 페이지의 텍스트 데이터입니다.
@@ -79,7 +78,7 @@ def parse_with_gemini(raw_text, page_num):
     """
 
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
         return response.text
     except Exception as e:
         print(f"Gemini API 호출 중 오류 (페이지 {page_num}): {e}")
@@ -236,4 +235,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
